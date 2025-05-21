@@ -22,6 +22,14 @@ const routes = [
   { path: '/login', component: Login },
   { path: '/register', component: Register },
   { path: '/home', component: Home },
+  {
+    path: '/api-tester',
+    name: 'ApiTester',
+    component: () => import('../views/ApiTester.vue'),
+    meta: {
+      title: 'API测试工具'
+    }
+  }
 
 ];
 
