@@ -30,6 +30,7 @@ import * as ordersApi from '@/api/orders'
 import * as dishesApi from '@/api/dishes'
 import * as cartApi from '@/api/cart'
 import * as merchantApi from '@/api/merchant'
+import * as orderItemsApi from '@/api/order-items'
 import { ref, computed, watch } from 'vue'
 
 // 手动维护API参数列表（如需自动化可用ts-morph等工具，但此处手动）
@@ -42,6 +43,9 @@ const apiList = [
   { name: 'createOrder', func: ordersApi.createOrder, params: [{ name: 'userId', type: 'number' }] },
   { name: 'updateOrderStatus', func: ordersApi.updateOrderStatus, params: [{ name: 'orderId', type: 'number' }, { name: 'status', type: 'Order[\'status\']' }] },
   { name: 'cancelOrder', func: ordersApi.cancelOrder, params: [{ name: 'orderId', type: 'number' }] },
+  // orderItemsApi
+  { name: 'getOrderItemsByOrderId', func: orderItemsApi.getOrderItemsByOrderId, params: [{ name: 'orderId', type: 'number' }] },
+  { name: 'addOrderItem', func: orderItemsApi.addOrderItem, params: [{ name: 'orderId', type: 'number' }, { name: 'dishId', type: 'number' }, { name: 'quantity', type: 'number' }] },
   // dishesApi
   { name: 'getDishDetail', func: dishesApi.getDishDetail, params: [{ name: 'id', type: 'number' }] },
   { name: 'updateDish', func: dishesApi.updateDish, params: [{ name: 'id', type: 'number' }, { name: 'data', type: 'UpdateDishDTO (JSON)' }] },

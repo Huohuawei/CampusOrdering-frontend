@@ -104,4 +104,14 @@ export interface SeasonalVegetable {
   id: number
   name: string
   season: Season
+}
+
+// OrderItem related types
+export interface OrderItem {
+  id: number
+  order: Order
+  dish: Dish
+  quantity: number
+  createdAt: string
+  updatedAt: string
 } 

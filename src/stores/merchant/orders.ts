@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Order } from '@/types'
+import type { Order, OrderItem } from '@/types'
 import {
   getOrderById,
   getOrdersByStatus,
@@ -9,13 +9,18 @@ import {
   updateOrderStatus,
   cancelOrder
 } from '@/api/orders'
+import {
+  getOrderItemsByOrderId,
+  addOrderItem
+} from '@/api/order-items'
 
 export const useMerchantOrdersStore = defineStore('merchantOrders', {
   state: () => ({
     orders: [] as Order[],
     loading: false,
     error: null as string | null,
-    currentOrder: null as Order | null
+    currentOrder: null as Order | null,
+    currentOrderItems: [] as OrderItem[]
   }),
 
   getters: {
@@ -145,6 +150,39 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
     clearOrders() {
       this.orders = []
       this.currentOrder = null
+    },
+
+    async fetchOrderItems(orderId: number) {
+      this.loading = true
+      this.error = null
+      try {
+        this.currentOrderItems = await getOrderItemsByOrderId(orderId)
+        return this.currentOrderItems
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : '获取订单项失败'
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async addOrderItem(orderId: number, dishId: number, quantity: number) {
+      this.loading = true
+      this.error = null
+      try {
+        const newOrderItem = await addOrderItem(orderId, dishId, quantity)
+        this.currentOrderItems.push(newOrderItem)
+        return newOrderItem
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : '添加订单项失败'
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    clearOrderItems() {
+      this.currentOrderItems = []
     }
   }
 }) 
