@@ -8,7 +8,7 @@ import {
   createOrder,
   updateOrderStatus,
   cancelOrder
-} from '@/api/merchant/orders'
+} from '@/api/orders'
 
 export const useMerchantOrdersStore = defineStore('merchantOrders', {
   state: () => ({

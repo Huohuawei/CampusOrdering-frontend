@@ -9,7 +9,7 @@ import {
   toggleDishAvailability,
   getMerchantDishes,
   getAvailableDishes
-} from '@/api/merchant/menu'
+} from '@/api/dishes'
 
 export const useMerchantDishesStore = defineStore('merchantDishes', {
   state: () => ({
