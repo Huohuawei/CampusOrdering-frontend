@@ -1,30 +1,25 @@
 import { defineStore } from 'pinia'
 import type { Order, OrderItem } from '@/types'
 import {
-  getOrderById,
-  getOrdersByStatus,
   getOrdersByMerchantId,
-  getOrdersByUserId,
-  createOrder,
+  getOrderById,
   updateOrderStatus,
   cancelOrder
 } from '@/api/orders'
 import {
-  getOrderItemsByOrderId,
-  addOrderItem
+  getOrderItemsByOrderId
 } from '@/api/order-items'
 
 export const useMerchantOrdersStore = defineStore('merchantOrders', {
   state: () => ({
     orders: [] as Order[],
-    loading: false,
-    error: null as string | null,
     currentOrder: null as Order | null,
-    currentOrderItems: [] as OrderItem[]
+    currentOrderItems: [] as OrderItem[],
+    loading: false,
+    error: null as string | null
   }),
 
   getters: {
-    getOrderById: (state) => (id: number) => state.orders.find(order => order.id === id),
     pendingOrders: (state) => state.orders.filter(order => order.status === 'PENDING'),
     processingOrders: (state) => state.orders.filter(order => 
       ['CONFIRMED', 'PREPARING', 'READY'].includes(order.status)
@@ -34,25 +29,12 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
   },
 
   actions: {
-    async fetchOrderById(id: number) {
+    // 获取商家的所有订单
+    async fetchMerchantOrders(merchantId: number) {
       this.loading = true
       this.error = null
       try {
-        this.currentOrder = await getOrderById(id)
-        return this.currentOrder
-      } catch (err) {
-        this.error = err instanceof Error ? err.message : '获取订单详情失败'
-        throw err
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async fetchOrdersByStatus(status: Order['status']) {
-      this.loading = true
-      this.error = null
-      try {
-        this.orders = await getOrdersByStatus(status)
+        this.orders = await getOrdersByMerchantId(merchantId)
       } catch (err) {
         this.error = err instanceof Error ? err.message : '获取订单列表失败'
         throw err
@@ -61,52 +43,28 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
       }
     },
 
-    async fetchOrdersByMerchant(merchantId: number) {
+    // 获取订单详情
+    async fetchOrderDetail(orderId: number) {
       this.loading = true
       this.error = null
       try {
-        this.orders = await getOrdersByMerchantId(merchantId)
+        this.currentOrder = await getOrderById(orderId)
+        this.currentOrderItems = await getOrderItemsByOrderId(orderId)
       } catch (err) {
-        this.error = err instanceof Error ? err.message : '获取商家订单列表失败'
+        this.error = err instanceof Error ? err.message : '获取订单详情失败'
         throw err
       } finally {
         this.loading = false
       }
     },
 
-    async fetchOrdersByUser(userId: number) {
-      this.loading = true
-      this.error = null
-      try {
-        this.orders = await getOrdersByUserId(userId)
-      } catch (err) {
-        this.error = err instanceof Error ? err.message : '获取用户订单列表失败'
-        throw err
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async createOrder(userId: number) {
-      this.loading = true
-      this.error = null
-      try {
-        const newOrder = await createOrder(userId)
-        this.orders.push(newOrder)
-        return newOrder
-      } catch (err) {
-        this.error = err instanceof Error ? err.message : '创建订单失败'
-        throw err
-      } finally {
-        this.loading = false
-      }
-    },
-
+    // 更新订单状态
     async updateOrderStatus(orderId: number, status: Order['status']) {
       this.loading = true
       this.error = null
       try {
         const updatedOrder = await updateOrderStatus(orderId, status)
+        // 更新本地订单列表
         const index = this.orders.findIndex(order => order.id === orderId)
         if (index !== -1) {
           this.orders[index] = updatedOrder
@@ -123,17 +81,19 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
       }
     },
 
+    // 取消订单
     async cancelOrder(orderId: number) {
       this.loading = true
       this.error = null
       try {
         await cancelOrder(orderId)
+        // 更新本地订单列表
         const index = this.orders.findIndex(order => order.id === orderId)
         if (index !== -1) {
-          this.orders[index] = { ...this.orders[index], status: 'CANCELED' }
+          this.orders[index].status = 'CANCELED'
         }
         if (this.currentOrder?.id === orderId) {
-          this.currentOrder = { ...this.currentOrder, status: 'CANCELED' }
+          this.currentOrder.status = 'CANCELED'
         }
       } catch (err) {
         this.error = err instanceof Error ? err.message : '取消订单失败'
@@ -143,45 +103,9 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
       }
     },
 
-    setCurrentOrder(order: Order | null) {
-      this.currentOrder = order
-    },
-
-    clearOrders() {
-      this.orders = []
+    // 清除当前订单
+    clearCurrentOrder() {
       this.currentOrder = null
-    },
-
-    async fetchOrderItems(orderId: number) {
-      this.loading = true
-      this.error = null
-      try {
-        this.currentOrderItems = await getOrderItemsByOrderId(orderId)
-        return this.currentOrderItems
-      } catch (err) {
-        this.error = err instanceof Error ? err.message : '获取订单项失败'
-        throw err
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async addOrderItem(orderId: number, dishId: number, quantity: number) {
-      this.loading = true
-      this.error = null
-      try {
-        const newOrderItem = await addOrderItem(orderId, dishId, quantity)
-        this.currentOrderItems.push(newOrderItem)
-        return newOrderItem
-      } catch (err) {
-        this.error = err instanceof Error ? err.message : '添加订单项失败'
-        throw err
-      } finally {
-        this.loading = false
-      }
-    },
-
-    clearOrderItems() {
       this.currentOrderItems = []
     }
   }

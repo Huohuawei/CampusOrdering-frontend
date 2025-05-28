@@ -188,7 +188,14 @@ export const useMerchantShopStore = defineStore('merchantShop', {
       this.loading = true
       this.error = null
       try {
-        // 从 localStorage 获取当前商家 ID
+        // 优先从 localStorage 获取模拟数据
+        const storedMerchant = localStorage.getItem('merchant')
+        if (storedMerchant) {
+          this.currentMerchant = JSON.parse(storedMerchant)
+          return this.currentMerchant
+        }
+
+        // 如果没有模拟数据，则从 API 获取
         const user = JSON.parse(localStorage.getItem('user') || '{}')
         if (user.id) {
           const merchant = await getMerchantByUserId(user.id)
@@ -208,7 +215,14 @@ export const useMerchantShopStore = defineStore('merchantShop', {
       this.loading = true
       this.error = null
       try {
-        const updatedMerchant = await updateMerchantInfo(data)
+        if (!this.currentMerchant?.id) {
+          throw new Error('当前商家ID不存在')
+        }
+        const merchantData = {
+          ...this.currentMerchant,
+          ...data
+        } as Merchant
+        const updatedMerchant = await updateMerchantInfo(this.currentMerchant.id, merchantData)
         if (this.currentMerchant?.id === updatedMerchant.id) {
           this.currentMerchant = updatedMerchant
         }

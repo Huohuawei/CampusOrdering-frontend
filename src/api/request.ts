@@ -30,15 +30,20 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     const res = response.data
-    // 这里可以根据后端的响应结构进行调整
-    if (res.code && res.code !== 200) {
+    // 检查 HTTP 状态码
+    if (response.status !== 200) {
       ElMessage.error(res.message || '请求失败')
       return Promise.reject(new Error(res.message || '请求失败'))
     }
-    return res
+    // 检查业务状态码
+    if (res.code && res.code !== 200) {
+      ElMessage.error(res.message || '业务处理失败')
+      return Promise.reject(new Error(res.message || '业务处理失败'))
+    }
+    return res.data || res
   },
   (error) => {
-    ElMessage.error(error.message || '请求失败')
+    ElMessage.error(error.response?.data?.message || error.message || '请求失败')
     return Promise.reject(error)
   }
 )

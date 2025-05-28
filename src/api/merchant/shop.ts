@@ -46,7 +46,7 @@ export function searchMerchantsByName(storeName: string) {
   return get<Merchant[]>(`/api/merchants/name/${storeName}`)
 }
 
-// 检查店铺名称是否已存在
+// 检查店铺名称是否存在
 export function checkStoreNameExists(storeName: string) {
   return get<boolean>(`/api/merchants/exists/store-name/${storeName}`)
 }

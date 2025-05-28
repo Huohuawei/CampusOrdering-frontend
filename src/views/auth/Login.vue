@@ -9,43 +9,53 @@
 import { useRouter } from 'vue-router'
 import { useMerchantShopStore } from '@/stores/merchant/shop'
 import AuthForm from './AuthForm.vue'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const merchantStore = useMerchantShopStore()
 
 const handleLogin = async (formData) => {
   try {
-    // 这里替换为实际的API调用
-    console.log('登录数据:', formData)
+    // 模拟登录成功，设置统一的模拟数据
+    const mockUser = {
+      id: 101,
+      username: "test",
+      password: "test",
+      email: "mioikeda@gmail.com",
+      phone: "52-390-8417",
+      role: "MERCHANT",
+      avatar: "bgqoiJ72Mh",
+      createdAt: "2016-09-28T10:23:31",
+      updatedAt: "2025-05-23T18:10:02"
+    }
 
-    // 模拟登录成功，硬编码为商家角色
-    localStorage.setItem('token', 'mock-token')
-    localStorage.setItem('user', JSON.stringify({
-      id: 11, // 使用商家ID
-      email: formData.email,
-      username: '测试商家',
-      role: 'MERCHANT'
-    }))
-
-    // 设置模拟的商家信息
-    merchantStore.setCurrentMerchant({
+    const mockMerchant = {
       id: 11,
-      userId: 11,
-      storeName: '测试商家',
-      description: '这是一个测试商家',
-      status: 'APPROVED',
-      address: '测试地址',
-      phone: '1234567890',
-      businessHours: '09:00-22:00',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    })
+      user: mockUser,
+      storeName: "绿色有机农场",
+      storeDescription: "提供新鲜有机蔬菜、水果和农产品，直接从农场到餐桌",
+      storeAddress: "北京市海淀区中关村南大街5号",
+      status: "PENDING",
+      createdAt: "2023-01-10T08:15:22",
+      updatedAt: "2025-04-27T19:39:45",
+      coverImage: "https://img0.baidu.com/it/u=2554227556,3236173474&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
+      wechatQr: "https://example.com/qr/wechat101.png",
+      alipayQr: "https://example.com/qr/alipay101.png"
+    }
 
-    // 直接跳转到商家界面
+    // 存储模拟数据到 localStorage
+    localStorage.setItem('token', 'mock-token')
+    localStorage.setItem('user', JSON.stringify(mockUser))
+    localStorage.setItem('merchant', JSON.stringify(mockMerchant))
+
+    // 更新 store 中的商家信息
+    merchantStore.setCurrentMerchant(mockMerchant)
+
+    // 跳转到商家界面
     router.push('/merchant')
   } catch (error) {
     console.error('登录失败:', error)
-    alert('登录失败，请检查邮箱和密码')
+    ElMessage.error('登录失败，请检查邮箱和密码')
   }
 }
 
