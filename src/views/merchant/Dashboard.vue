@@ -95,10 +95,17 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Shop, List, TrendCharts, Menu, ChatDotRound } from '@element-plus/icons-vue'
 import { useMerchantShopStore } from '@/stores/merchant/shop'
+import { useMerchantOrdersStore } from '@/stores/merchant/orders'
+import { useMerchantDishesStore } from '@/stores/merchant/dishes'
+import { useMerchantReviewsStore } from '@/stores/merchant/reviews'
 import { ElCard, ElRow, ElCol } from 'element-plus'
+import type { DateRange } from '@/types'
 
 const router = useRouter()
 const merchantStore = useMerchantShopStore()
+const ordersStore = useMerchantOrdersStore()
+const dishesStore = useMerchantDishesStore()
+const reviewsStore = useMerchantReviewsStore()
 
 // 今日订单统计
 const todayOrders = ref({
@@ -124,33 +131,67 @@ const reviewStats = ref({
   total: 0
 })
 
+// 获取今日日期范围
+const getTodayDateRange = (): DateRange => {
+  const today = new Date()
+  const dateStr = today.toISOString().split('T')[0]
+  return {
+    startDate: dateStr,
+    endDate: dateStr
+  }
+}
+
 // 获取统计数据
 const fetchDashboardStats = async () => {
   try {
-    // 模拟数据
+    if (!merchantStore.currentMerchant?.id) {
+      throw new Error('当前商家信息不存在')
+    }
+
+    // 获取今日订单统计
+    const todayRange = getTodayDateRange()
+    const orderStats = await ordersStore.fetchOrderStats(
+      merchantStore.currentMerchant.id,
+      todayRange
+    )
     todayOrders.value = {
-      pending: 5,
-      completed: 10
+      pending: orderStats.pending.count,
+      completed: orderStats.completed.count
     }
     todayStats.value = {
-      orderCount: 15,
-      totalAmount: 299.99
+      orderCount: orderStats.total.count,
+      totalAmount: orderStats.total.amount
     }
+
+    // 获取菜单统计
+    await dishesStore.fetchAllDishes()
     menuStats.value = {
-      total: 20,
-      available: 15
+      total: dishesStore.dishes.length,
+      available: dishesStore.dishes.filter(dish => dish.available).length
     }
+
+    // 获取评价统计
+    await reviewsStore.fetchAllReviews()
+    const reviews = reviewsStore.reviews
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
     reviewStats.value = {
-      averageRating: 4.5,
-      total: 100
+      averageRating: reviews.length ? Number((totalRating / reviews.length).toFixed(1)) : 0,
+      total: reviews.length
     }
   } catch (error) {
     console.error('获取统计数据失败:', error)
   }
 }
 
-onMounted(() => {
-  fetchDashboardStats()
+onMounted(async () => {
+  try {
+    // 获取当前商家信息
+    await merchantStore.getCurrentMerchant()
+    // 获取统计数据
+    await fetchDashboardStats()
+  } catch (error) {
+    console.error('初始化失败:', error)
+  }
 })
 </script>
 
