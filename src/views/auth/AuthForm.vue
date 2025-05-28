@@ -91,7 +91,7 @@
   </template>
   
   <script setup>
-  import { ref, defineProps, defineEmits } from 'vue'
+  import { ref } from 'vue'
   
   const props = defineProps({
     isRegister: {
@@ -121,11 +121,66 @@
   </script>
   
   <style scoped>
-  /* 原有样式保持不变 */
-  select {
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #dcdfe6;
     border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: #409eff;
+  }
+
+  button {
+    background-color: #409eff;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #66b1ff;
+  }
+
+  .toggle-auth {
+    text-align: center;
+    margin-top: 1rem;
+    color: #606266;
+  }
+
+  .toggle-auth a {
+    color: #409eff;
+    text-decoration: none;
+    margin-left: 0.5rem;
+  }
+
+  .toggle-auth a:hover {
+    color: #66b1ff;
   }
   </style>

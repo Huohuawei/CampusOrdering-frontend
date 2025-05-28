@@ -29,4 +29,4 @@ export function removeItemFromCart(cartItemId: number) {
 // 清空购物车
 export function clearCart(userId: number) {
   return del<void>(`/api/carts/user/${userId}/clear`)
-} 
+}

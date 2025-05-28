@@ -184,6 +184,43 @@ export const useMerchantShopStore = defineStore('merchantShop', {
       }
     },
 
+    async getCurrentMerchant() {
+      this.loading = true
+      this.error = null
+      try {
+        // 从 localStorage 获取当前商家 ID
+        const user = JSON.parse(localStorage.getItem('user') || '{}')
+        if (user.id) {
+          const merchant = await getMerchantByUserId(user.id)
+          this.currentMerchant = merchant
+          return merchant
+        }
+        return null
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : '获取商家信息失败'
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateMerchant(data: Partial<Merchant>) {
+      this.loading = true
+      this.error = null
+      try {
+        const updatedMerchant = await updateMerchantInfo(data)
+        if (this.currentMerchant?.id === updatedMerchant.id) {
+          this.currentMerchant = updatedMerchant
+        }
+        return updatedMerchant
+      } catch (err) {
+        this.error = err instanceof Error ? err.message : '更新商家信息失败'
+        throw err
+      } finally {
+        this.loading = false
+      }
+    },
+
     setCurrentMerchant(merchant: Merchant | null) {
       this.currentMerchant = merchant
     },

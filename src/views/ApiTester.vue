@@ -113,7 +113,7 @@ async function callApi() {
       if (param.type.includes('number')) return val ? Number(val) : undefined
       return val
     })
-    const res = await selectedApi.value.func(...args)
+    const res = await (selectedApi.value.func as Function)(...args)
     result.value = JSON.stringify(res, null, 2)
   } catch (e: any) {
     result.value = e.message || String(e)
