@@ -114,4 +114,9 @@ export interface OrderItem {
   quantity: number
   createdAt: string
   updatedAt: string
+}
+
+export interface DateRange {
+  startDate: string
+  endDate: string
 } 

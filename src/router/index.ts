@@ -32,38 +32,32 @@ const routes = [
   // 商家路由
   {
     path: '/merchant',
-    component: MerchantLayout,
+    component: () => import('@/views/merchant/MerchantLayout.vue'),
     meta: { requiresAuth: true, role: 'MERCHANT' },
     children: [
       {
         path: '',
-        name: 'MerchantDashboard',
-        component: MerchantDashboard,
-        meta: { title: '商家主页' }
+        redirect: '/merchant/dashboard'
+      },
+      {
+        path: 'dashboard',
+        component: () => import('@/views/merchant/Dashboard.vue')
       },
       {
         path: 'menu',
-        name: 'MenuManagement',
-        component: MenuManagement,
-        meta: { title: '菜单管理' }
+        component: () => import('@/views/merchant/MenuManagement.vue')
       },
       {
         path: 'orders',
-        name: 'OrderManagement',
-        component: OrderManagement,
-        meta: { title: '订单管理' }
+        component: () => import('@/views/merchant/OrderManagement.vue')
+      },
+      {
+        path: 'statistics',
+        component: () => import('@/views/merchant/SalesStatistics.vue')
       },
       {
         path: 'profile',
-        name: 'Profile',
-        component: Profile,
-        meta: { title: '店铺信息' }
-      },
-      {
-        path: 'reviews',
-        name: 'Reviews',
-        component: Reviews,
-        meta: { title: '评价管理' }
+        component: () => import('@/views/merchant/Profile.vue')
       }
     ]
   },

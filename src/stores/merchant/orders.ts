@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Order, OrderItem } from '@/types'
+import type { Order, OrderItem, DateRange } from '@/types'
 import {
   getOrdersByMerchantId,
   getOrderById,
@@ -9,6 +9,16 @@ import {
 import {
   getOrderItemsByOrderId
 } from '@/api/order-items'
+
+interface OrderStats {
+  total: { count: number; amount: number }
+  pending: { count: number; amount: number }
+  confirmed: { count: number; amount: number }
+  preparing: { count: number; amount: number }
+  ready: { count: number; amount: number }
+  completed: { count: number; amount: number }
+  canceled: { count: number; amount: number }
+}
 
 export const useMerchantOrdersStore = defineStore('merchantOrders', {
   state: () => ({
@@ -34,10 +44,12 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
       this.loading = true
       this.error = null
       try {
-        this.orders = await getOrdersByMerchantId(merchantId)
-      } catch (err) {
-        this.error = err instanceof Error ? err.message : '获取订单列表失败'
-        throw err
+        const orders = await getOrdersByMerchantId(merchantId)
+        this.orders = orders
+        return orders
+      } catch (error) {
+        this.error = '获取订单列表失败'
+        throw error
       } finally {
         this.loading = false
       }
@@ -107,6 +119,77 @@ export const useMerchantOrdersStore = defineStore('merchantOrders', {
     clearCurrentOrder() {
       this.currentOrder = null
       this.currentOrderItems = []
+    },
+
+    async fetchOrderStats(merchantId: number, dateRange: DateRange): Promise<OrderStats> {
+      try {
+        const orders = await this.fetchMerchantOrders(merchantId)
+        console.log('获取到的所有订单:', orders)
+        
+        // 日期筛选
+        const filteredOrders = dateRange.startDate && dateRange.endDate
+          ? orders.filter(order => {
+              const orderDate = new Date(order.createdAt)
+              const startDate = new Date(dateRange.startDate + 'T00:00:00')
+              const endDate = new Date(dateRange.endDate + 'T23:59:59')
+              console.log('订单日期:', orderDate, '开始日期:', startDate, '结束日期:', endDate)
+              return orderDate >= startDate && orderDate <= endDate
+            })
+          : orders
+        console.log('筛选后的订单:', filteredOrders)
+
+        // 初始化统计数据
+        const stats: OrderStats = {
+          total: { count: 0, amount: 0 },
+          pending: { count: 0, amount: 0 },
+          confirmed: { count: 0, amount: 0 },
+          preparing: { count: 0, amount: 0 },
+          ready: { count: 0, amount: 0 },
+          completed: { count: 0, amount: 0 },
+          canceled: { count: 0, amount: 0 }
+        }
+
+        // 统计各类数据
+        filteredOrders.forEach(order => {
+          const amount = order.totalPrice || 0
+          // 更新总数
+          stats.total.count++
+          stats.total.amount += amount
+
+          // 根据订单状态更新对应分类
+          switch (order.status) {
+            case 'PENDING':
+              stats.pending.count++
+              stats.pending.amount += amount
+              break
+            case 'CONFIRMED':
+              stats.confirmed.count++
+              stats.confirmed.amount += amount
+              break
+            case 'PREPARING':
+              stats.preparing.count++
+              stats.preparing.amount += amount
+              break
+            case 'READY':
+              stats.ready.count++
+              stats.ready.amount += amount
+              break
+            case 'COMPLETED':
+              stats.completed.count++
+              stats.completed.amount += amount
+              break
+            case 'CANCELED':
+              stats.canceled.count++
+              stats.canceled.amount += amount
+              break
+          }
+        })
+        console.log('计算后的统计数据:', stats)
+        return stats
+      } catch (error) {
+        console.error('获取订单统计失败:', error)
+        throw error
+      }
     }
   }
 }) 
