@@ -124,43 +124,19 @@ import type { FormInstance, UploadProps } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 import { useMerchantDishesStore } from '@/stores/merchant/dishes'
 import { useMerchantShopStore } from '@/stores/merchant/shop'
-import type { Dish } from '@/types'
+import type { Dish, Merchant } from '@/types'
 
 const dishesStore = useMerchantDishesStore()
 const merchantStore = useMerchantShopStore()
 
-// 模拟商家数据
-const mockMerchant = {
-  id: 11,
-  user: {
-    id: 101,
-    username: "test",
-    password: "test",
-    email: "mioikeda@gmail.com",
-    phone: "52-390-8417",
-    role: "MERCHANT" as const,
-    avatar: "bgqoiJ72Mh",
-    createdAt: "2016-09-28T10:23:31",
-    updatedAt: "2025-05-23T18:10:02"
-  },
-  storeName: "绿色有机农场",
-  storeDescription: "提供新鲜有机蔬菜、水果和农产品，直接从农场到餐桌",
-  storeAddress: "北京市海淀区中关村南大街5号",
-  status: "PENDING" as const,
-  createdAt: "2023-01-10T08:15:22",
-  updatedAt: "2025-04-27T19:39:45",
-  coverImage: "https://img0.baidu.com/it/u=2554227556,3236173474&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=800",
-  wechatQr: "https://example.com/qr/wechat101.png",
-  alipayQr: "https://example.com/qr/alipay101.png"
-}
-
+// 移除模拟商家数据
 const loading = ref(false)
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const formRef = ref<FormInstance>()
 
 const dishForm = ref<Omit<Dish, 'id' | 'createdAt' | 'updatedAt'>>({
-  merchant: mockMerchant,
+  merchant: merchantStore.currentMerchant as Merchant,
   name: '',
   description: '',
   price: 0,
@@ -195,7 +171,10 @@ const rules = {
 const fetchDishes = async () => {
   loading.value = true
   try {
-    await dishesStore.fetchMerchantDishes(mockMerchant.id)
+    if (!merchantStore.currentMerchant?.id) {
+      throw new Error('当前商家信息不存在')
+    }
+    await dishesStore.fetchMerchantDishes(merchantStore.currentMerchant.id)
   } catch (error) {
     ElMessage.error('获取菜品列表失败')
   } finally {
@@ -207,7 +186,7 @@ const fetchDishes = async () => {
 const showAddDishDialog = () => {
   isEdit.value = false
   dishForm.value = {
-    merchant: mockMerchant,
+    merchant: merchantStore.currentMerchant as Merchant,
     name: '',
     description: '',
     price: 0,
@@ -303,8 +282,15 @@ const beforeImageUpload: UploadProps['beforeUpload'] = (file) => {
   return true
 }
 
-onMounted(() => {
-  fetchDishes()
+onMounted(async () => {
+  try {
+    // 获取当前商家信息
+    await merchantStore.getCurrentMerchant()
+    // 获取菜品列表
+    await fetchDishes()
+  } catch (error) {
+    ElMessage.error('初始化失败')
+  }
 })
 </script>
 
