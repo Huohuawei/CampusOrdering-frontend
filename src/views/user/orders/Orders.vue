@@ -1,12 +1,29 @@
 ﻿<template>
-  <div class="page-wrapper">
-    <div class="page-container">
-      <h2 class="title">我的订单</h2>
+  <div class="orders-page">
+    <div class="orders-header">
+      <h2 class="orders-title">
+        <i class="fas fa-clipboard-list"></i>
+        我的订单
+      </h2>
+    </div>
 
+    <div class="orders-content">
       <!-- 搜索 + 排序 -->
       <div class="toolbar">
-        <el-input v-model="searchText" placeholder="搜索订单号或店铺名" clearable />
-        <el-select v-model="sortKey" placeholder="排序方式" style="width: 180px;">
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <el-input 
+            v-model="searchText" 
+            placeholder="搜索订单号或店铺名" 
+            clearable
+            class="search-input"
+          />
+        </div>
+        <el-select 
+          v-model="sortKey" 
+          placeholder="排序方式" 
+          class="sort-select"
+        >
           <el-option label="时间倒序" value="time_desc" />
           <el-option label="时间正序" value="time_asc" />
           <el-option label="金额从高到低" value="price_desc" />
@@ -14,7 +31,15 @@
         </el-select>
       </div>
 
-      <el-empty v-if="filteredOrders.length === 0" description="暂无订单" />
+      <el-empty 
+        v-if="filteredOrders.length === 0" 
+        description="暂无订单"
+        class="empty-state"
+      >
+        <template #image>
+          <i class="fas fa-shopping-bag empty-icon"></i>
+        </template>
+      </el-empty>
 
       <div class="order-list" v-else>
         <el-card
@@ -24,49 +49,92 @@
           class="order-card"
         >
           <!-- 封面图 -->
-          <el-image
-            class="order-cover"
-            :src="order.merchant?.coverImage"
-            fit="cover"
-            lazy
-          >
-            <template #error>
-              <div class="order-cover-placeholder">加载失败</div>
-            </template>
-          </el-image>
-
-          <!-- 内容 -->
-          <div class="order-header">
-            <div class="order-info">
-              <div>
-                <p class="order-store">{{ order.merchant?.storeName || '未知商户' }}</p>
-                <p class="order-text">订单号：{{ order.id }}</p>
-                <p class="order-text">下单时间：{{ formatDate(order.createdAt) }}</p>
-              </div>
-            </div>
-
-            <div class="text-right">
-              <el-tag :type="getStatusType(order.status)" size="small" effect="light" round>
+          <div class="order-cover-wrapper">
+            <el-image
+              class="order-cover"
+              :src="order.merchant?.coverImage"
+              fit="cover"
+              lazy
+            >
+              <template #error>
+                <div class="order-cover-placeholder">
+                  <i class="fas fa-image"></i>
+                  <span>加载失败</span>
+                </div>
+              </template>
+            </el-image>
+            <div class="order-status">
+              <el-tag 
+                :type="getStatusType(order.status)" 
+                size="small" 
+                effect="dark" 
+                round
+              >
                 {{ order.status }}
               </el-tag>
-              <p class="order-total">￥{{ order.totalPrice }}</p>
             </div>
           </div>
 
-          <!-- ✅ 新增：订单项明细 -->
-          <div class="order-items">
-            <el-table
-              :data="order.items"
-              v-if="order.items && order.items.length"
-              style="width: 100%; margin-top: 10px;"
-              size="small"
-              border
-            >
-              <el-table-column prop="dish.name" label="菜品名称" />
-              <el-table-column prop="dish.price" label="单价" />
-              <el-table-column prop="quantity" label="数量" />
-            </el-table>
-            <div v-else style="margin-top: 10px; color: gray;">暂无订单详情</div>
+          <!-- 内容 -->
+          <div class="order-content">
+            <div class="order-header">
+              <div class="order-info">
+                <h3 class="order-store">
+                  <i class="fas fa-store"></i>
+                  {{ order.merchant?.storeName || '未知商户' }}
+                </h3>
+                <div class="order-meta">
+                  <p class="order-text">
+                    <i class="fas fa-hashtag"></i>
+                    订单号：{{ order.id }}
+                  </p>
+                  <p class="order-text">
+                    <i class="fas fa-clock"></i>
+                    下单时间：{{ formatDate(order.createdAt) }}
+                  </p>
+                </div>
+              </div>
+              <div class="order-total">
+                <span class="total-label">总计</span>
+                <span class="total-price">￥{{ order.totalPrice.toFixed(2) }}</span>
+              </div>
+            </div>
+
+            <!-- 订单项明细 -->
+            <div class="order-items">
+              <el-table
+                :data="order.items"
+                v-if="order.items && order.items.length"
+                style="width: 100%"
+                size="small"
+                :header-cell-style="{ background: '#f8f9fa', color: '#2c3e50' }"
+                :cell-style="{ padding: '12px' }"
+              >
+                <el-table-column label="菜品" min-width="200">
+                  <template #default="{ row }">
+                    <div class="dish-info">
+                      <img :src="row.dish.imageUrl" class="dish-img" />
+                      <span class="dish-name">{{ row.dish.name }}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="dish.price" label="单价" width="100">
+                  <template #default="{ row }">
+                    <span class="price">¥{{ row.dish.price }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="quantity" label="数量" width="80" />
+                <el-table-column label="小计" width="100">
+                  <template #default="{ row }">
+                    <span class="subtotal">¥{{ (row.dish.price * row.quantity).toFixed(2) }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div v-else class="no-items">
+                <i class="fas fa-exclamation-circle"></i>
+                暂无订单详情
+              </div>
+            </div>
           </div>
         </el-card>
       </div>
@@ -83,7 +151,8 @@ const orders = ref([])
 const searchText = ref('')
 const sortKey = ref('time_desc')
 
-const userId = 1
+const user = JSON.parse(localStorage.getItem('user'))
+const userId = user?.id  
 
 onMounted(async () => {
   try {
@@ -149,73 +218,176 @@ const formatDate = (datetime) => {
 </script>
 
 <style scoped>
-.page-wrapper {
-  display: flex;
-  justify-content: center;
-  background-color: #f9fafb;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
+.orders-page {
   min-height: 100vh;
-  padding: 40px 0;
+  background-color: #f8f9fa;
+  font-family: 'Poppins', sans-serif;
+  padding: 24px;
 }
 
-.page-container {
-  width: 100%;
-  max-width: 960px;
-  padding: 0 16px;
-}
-
-.title {
+.orders-header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  margin: -24px -24px 30px -24px;
+  padding: 40px 24px;
   text-align: center;
+}
+
+.orders-title {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.orders-title i {
   font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 24px;
+}
+
+.orders-content {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .toolbar {
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
-  align-items: center;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* ✅ 两列排列：新增 */
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-wrapper i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.search-input {
+  width: 100%;
+}
+
+.search-input :deep(.el-input__wrapper) {
+  padding-left: 36px;
+  border-radius: 8px;
+}
+
+.sort-select {
+  width: 180px;
+}
+
+.sort-select :deep(.el-input__wrapper) {
+  border-radius: 8px;
+}
+
+.empty-state {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: #ddd;
+}
+
 .order-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
 }
 
 .order-card {
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
   overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-cover-wrapper {
+  position: relative;
+  height: 200px;
 }
 
 .order-cover {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
 }
 
 .order-cover-placeholder {
   width: 100%;
-  height: 180px;
-  background-color: #f2f2f2;
-  color: #999;
+  height: 100%;
+  background: #f0f0f0;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  color: #999;
+  gap: 8px;
+}
+
+.order-cover-placeholder i {
+  font-size: 32px;
+}
+
+.order-status {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+}
+
+.order-content {
+  padding: 20px;
 }
 
 .order-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  margin-bottom: 16px;
 }
 
 .order-info {
+  flex: 1;
+}
+
+.order-store {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-store i {
+  color: #3498db;
+}
+
+.order-meta {
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -223,19 +395,113 @@ const formatDate = (datetime) => {
 
 .order-text {
   font-size: 14px;
-  color: #6b7280;
-  margin: 2px 0;
+  color: #666;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.order-store {
-  font-size: 16px;
-  font-weight: 600;
+.order-text i {
+  color: #999;
+  font-size: 12px;
 }
 
 .order-total {
-  font-size: 20px;
-  color: #dc2626;
-  font-weight: bold;
-  margin-top: 8px;
+  text-align: right;
+}
+
+.total-label {
+  display: block;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.total-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.order-items {
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}
+
+.dish-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dish-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.dish-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.price, .subtotal {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.subtotal {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.no-items {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .orders-header {
+    padding: 30px 16px;
+  }
+
+  .orders-title {
+    font-size: 24px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .search-wrapper {
+    max-width: 100%;
+  }
+
+  .sort-select {
+    width: 100%;
+  }
+
+  .order-list {
+    grid-template-columns: 1fr;
+  }
+
+  .order-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .order-total {
+    text-align: left;
+  }
 }
 </style>

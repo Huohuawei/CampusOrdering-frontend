@@ -9,6 +9,8 @@ import UserLayout from '../views/user/layout/UserLayout.vue'
 import Home from '../views/user/home/Index.vue'
 import MerchantDetail from '../views/user/home/MerchantDetail.vue'
 import Cart from '../views/user/cart/Cart.vue'
+import AIassistant from '../views/user/home/AI.vue'
+
 import Orders from '../views/user/orders/Orders.vue'
 
 // 定义路由规则
@@ -27,21 +29,33 @@ const routes = [
       { path: 'orders', component: Orders },
       { path: 'order/confirm', name: 'OrderConfirm', component: () => import('../views/user/orders/OrderConfirm.vue') },
       { path: '/merchant/:id', component: MerchantDetail },
+      { path: 'aiassistant', component: AIassistant },
       { path: '', redirect: 'home' }
     ]
   },
 
+
   // 默认访问根路径跳转到 /user
-  { path: '/', redirect: '/user/home' }
+  { path: '/', redirect: 'login' }
+  
 ]
 
 // 创建 Router 实例
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// 路由守卫 - 检查登录状态
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('token')
+  
+  if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next('/login')
+  } else {
+    next()
+  }
 })
-
-
 
 
 export default router

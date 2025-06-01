@@ -146,10 +146,22 @@ const switchToLogin = () => {
   display: flex;
   min-height: 100vh;
   background:
-    linear-gradient(135deg, rgba(66, 185, 131, 0.1) 0%, rgba(44, 62, 80, 0.2) 100%),
+    linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, rgba(44, 62, 80, 0.3) 100%),
     url('../src/assets/logo1.jpg') no-repeat center center;
   background-size: cover;
   padding: 2rem;
+  position: relative;
+}
+
+.auth-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(44, 62, 80, 0.2));
+  z-index: 1;
 }
 
 .auth-container {
@@ -157,43 +169,52 @@ const switchToLogin = () => {
   max-width: 500px;
   margin: auto;
   padding: 2.5rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  z-index: 2;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .auth-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 h1 {
-  font-size: 1.8rem;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-size: 2rem;
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
 }
 
 .subtitle {
   color: #666;
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
   margin-bottom: 0;
 }
 
 .auth-footer {
   margin-top: 2rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #666;
 }
 
 .auth-footer a {
-  color: #42b983;
+  color: #3498db;
   text-decoration: none;
   font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .auth-footer a:hover {
+  color: #2980b9;
   text-decoration: underline;
 }
 
@@ -203,11 +224,15 @@ h1 {
   }
 
   .auth-container {
-    padding: 1.5rem;
+    padding: 2rem;
   }
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
   }
 }
 </style>

@@ -1,8 +1,15 @@
 ﻿<template>
   <div class="home">
-    <!-- 搜索 -->
-    <div class="search-filter">
-      <input v-model="searchKeyword" placeholder="搜索商户..." class="search-input" />
+    <!-- 搜索区域 -->
+    <div class="search-section">
+      <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          v-model="searchKeyword" 
+          placeholder="搜索商户..." 
+          class="search-input"
+        />
+      </div>
     </div>
 
     <!-- 商户列表 -->
@@ -13,11 +20,22 @@
         :key="merchant.id"
         @click="goToDetail(merchant.id)"
       >
-        <img :src="merchant.coverImage" alt="商户图片" class="merchant-img" />
+        <div class="merchant-img-container">
+          <img :src="merchant.coverImage" alt="商户图片" class="merchant-img" />
+          <div class="merchant-overlay">
+            <span class="view-details">查看详情</span>
+          </div>
+        </div>
         <div class="merchant-info">
           <h3 class="merchant-name">{{ merchant.storeName }}</h3>
-          <p class="merchant-description">📝 {{ merchant.storeDescription }}</p>
-          <p class="merchant-address">📍 {{ merchant.storeAddress }}</p>
+          <p class="merchant-description">
+            <i class="fas fa-utensils"></i>
+            {{ merchant.storeDescription }}
+          </p>
+          <p class="merchant-address">
+            <i class="fas fa-map-marker-alt"></i>
+            {{ merchant.storeAddress }}
+          </p>
         </div>
       </div>
     </div>
@@ -41,7 +59,6 @@ const goToDetail = (id) => {
 onMounted(async () => {
   try {
     const res = await getMerchants() // ✅ 只请求一次
-    console.log('拿到的商户数据:', res)
     merchants.value = Array.isArray(res) ? res : []
   } catch (error) {
     console.error('加载商户数据失败', error)
@@ -59,90 +76,146 @@ const filteredMerchants = computed(() => {
 })
 </script>
 
-
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
 
 .home {
   padding: 20px;
   font-family: 'Poppins', sans-serif;
-  background-color: #f9f9f9;
+  background-color: #f8f9fa;
   min-height: 100vh;
 }
 
-/* 搜索栏 */
-.search-filter {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+/* 搜索区域样式 */
+.search-section {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  padding: 40px 20px;
+  margin: -20px -20px 30px -20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.search-container {
   max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+  font-size: 18px;
 }
 
 .search-input {
-  flex: 1;
-  min-width: 240px;
-  max-width: 500px;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 15px;
+  width: 100%;
+  padding: 16px 16px 16px 48px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
-/* 商户卡片列表 */
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+}
+
+/* 商户列表样式 */
 .merchant-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* ✅ 自动三列，自适应 */
-  gap: 24px;
-  justify-content: center;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 10px; /* ✅ 两边留点空间 */
+  padding: 0 10px;
 }
 
 .merchant-card {
-  display: flex;
-  flex-direction: column;
   background-color: #fff;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s ease;
   cursor: pointer;
   height: 100%;
+  position: relative;
 }
 
 .merchant-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); /* ✅ hover加深阴影 */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.merchant-img-container {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
 }
 
 .merchant-img {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
-  border-bottom: 1px solid #eee; /* ✅ 图片下方增加细线分隔 */
+  transition: transform 0.3s ease;
+}
+
+.merchant-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.merchant-card:hover .merchant-overlay {
+  opacity: 1;
+}
+
+.merchant-card:hover .merchant-img {
+  transform: scale(1.05);
+}
+
+.view-details {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 8px 20px;
+  border: 2px solid white;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.view-details:hover {
+  background: white;
+  color: #2c3e50;
 }
 
 .merchant-info {
-  padding: 24px 16px; /* ✅ 内边距加大，更舒适 */
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  flex: 1;
+  gap: 12px;
 }
 
 .merchant-name {
-  font-size: 22px; /* ✅ 标题再大一点 */
-  font-weight: 800;
-  color: #222;
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c3e50;
   margin: 0;
+  line-height: 1.3;
 }
 
 .merchant-description,
@@ -150,9 +223,30 @@ const filteredMerchants = computed(() => {
   font-size: 15px;
   color: #666;
   margin: 0;
-  line-height: 1.6; /* ✅ 行距变松，阅读更舒服 */
-  max-width: 90%;
-  word-break: break-word;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
+.merchant-description i,
+.merchant-address i {
+  color: #3498db;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .search-section {
+    padding: 30px 15px;
+  }
+  
+  .merchant-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .merchant-img-container {
+    height: 180px;
+  }
+}
 </style>

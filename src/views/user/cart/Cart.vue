@@ -1,25 +1,34 @@
 ﻿<template>
   <div class="cart-page">
-    <h2 style="text-align: center; margin-bottom: 24px;">🛒 我的购物车</h2>
-
-    <div v-if="filteredGroupedItems && Object.keys(filteredGroupedItems).length === 0" class="empty">
-      没有找到符合的菜品，请重新搜索～
+    <div class="cart-header">
+      <h2 class="cart-title">
+        <i class="fas fa-shopping-cart"></i>
+        我的购物车
+      </h2>
     </div>
 
-    <div v-else class="cart-list">
+    <div v-if="filteredGroupedItems && Object.keys(filteredGroupedItems).length === 0" class="empty-cart">
+      <i class="fas fa-shopping-basket"></i>
+      <p>购物车还是空的，快去挑选美食吧～</p>
+    </div>
+
+    <div v-else class="cart-content">
       <!-- 搜索 + 全选 -->
       <div class="cart-actions">
-        <el-input
-          v-model="search"
-          placeholder="搜索菜品..."
-          size="large"
-          class="search-input"
-          clearable
-        />
+        <div class="search-wrapper">
+          <i class="fas fa-search"></i>
+          <el-input
+            v-model="search"
+            placeholder="搜索菜品..."
+            size="large"
+            class="search-input"
+            clearable
+          />
+        </div>
         <el-checkbox
           v-model="selectAll"
           @change="toggleSelectAll"
-          class="round-checkbox"
+          class="select-all"
         >
           全选
         </el-checkbox>
@@ -27,20 +36,33 @@
 
       <!-- 每个商户分组 -->
       <div v-for="(group, merchantId) in filteredGroupedItems" :key="merchantId" class="merchant-group">
-        <h3 class="merchant-name">🏬 {{ group[0].dish.merchant.storeName }}</h3>
+        <div class="merchant-header">
+          <i class="fas fa-store"></i>
+          <h3 class="merchant-name">{{ group[0].dish.merchant.storeName }}</h3>
+        </div>
         <el-checkbox-group v-model="selectedIds">
           <div class="dish-grid">
             <div class="dish-card" v-for="item in group" :key="item.id">
-              <img :src="item.dish.imageUrl" class="dish-img" />
-              <h4 class="dish-name">{{ item.dish.name }}</h4>
-              <div class="dish-meta">
-                <el-checkbox :value="item.id" class="card-checkbox" />
-                <span class="dish-price">¥{{ item.dish.price }}</span>
+              <div class="dish-img-wrapper">
+                <img :src="item.dish.imageUrl" class="dish-img" />
+                <div class="dish-overlay">
+                  <span class="dish-price">¥{{ item.dish.price }}</span>
+                </div>
               </div>
-              <div class="count-controls">
-                <button @click="changeQuantity(item, item.quantity - 1)">－</button>
-                <span>{{ item.quantity }}</span>
-                <button @click="changeQuantity(item, item.quantity + 1)">＋</button>
+              <div class="dish-info">
+                <h4 class="dish-name">{{ item.dish.name }}</h4>
+                <div class="dish-meta">
+                  <el-checkbox :value="item.id" class="card-checkbox" />
+                  <div class="count-controls">
+                    <button class="control-btn minus" @click="changeQuantity(item, item.quantity - 1)">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <span class="quantity">{{ item.quantity }}</span>
+                    <button class="control-btn plus" @click="changeQuantity(item, item.quantity + 1)">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -49,9 +71,13 @@
 
       <!-- 底部操作 -->
       <div class="cart-footer">
-        <p class="total">已选总价：¥{{ selectedTotal }}</p>
-        <el-button type="primary" size="large" round @click="submitOrder">
-          💰 选择结算
+        <div class="total-info">
+          <span class="total-label">已选总价：</span>
+          <span class="total-price">¥{{ selectedTotal }}</span>
+        </div>
+        <el-button type="primary" size="large" class="checkout-btn" @click="submitOrder">
+          <i class="fas fa-wallet"></i>
+          去结算
         </el-button>
       </div>
     </div>
@@ -65,7 +91,12 @@ import { getCartByUserId, getCartItems, updateCartItemQuantity, removeCartItem }
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
-const userId = 1
+
+const user = JSON.parse(localStorage.getItem('user'))
+const userId = user?.id  
+
+console.log("asfghisahashgiuads",userId)
+
 const cartItems = ref([])
 const selectedIds = ref([])
 const selectAll = ref(false)
@@ -158,173 +189,315 @@ const submitOrder = () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+
 .cart-page {
-  padding: 24px;
+  min-height: 100vh;
+  background-color: #f8f9fa;
   font-family: 'Poppins', sans-serif;
+  padding: 24px;
+}
+
+.cart-header {
+  background: linear-gradient(135deg, #2c3e50, #3498db);
+  margin: -24px -24px 30px -24px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.cart-title {
+  color: #fff;
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.cart-title i {
+  font-size: 24px;
+}
+
+.empty-cart {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-cart i {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 16px;
+}
+
+.empty-cart p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.cart-content {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* 搜索 + 全选 */
-/* 搜索框 + 全选框 */
 .cart-actions {
   display: flex;
-  justify-content: center;         /* 水平居中对齐 */
-  align-items: center;             /* 垂直居中对齐 */
-  gap: 120px;                      /* ✅ 增大搜索框与全选框的间距 */
-  margin-bottom: 24px;
-  width: 100%;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-wrapper i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
 }
 
 .search-input {
-  width: 300px;
+  width: 100%;
 }
 
-.round-checkbox {
-  transform: scale(2.0);
-  display: flex;
-  align-items: center;
+.search-input :deep(.el-input__wrapper) {
+  padding-left: 36px;
+  border-radius: 8px;
 }
 
-::v-deep(.round-checkbox .el-checkbox__label) {
-  font-size: 8px;
-  margin-left: 2px;
+.select-all {
+  margin-left: 20px;
 }
 
 /* 商户分组 */
-.cart-list {
-  width: 100%;
-  max-width: 1200px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+.merchant-group {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.merchant-group {
+.merchant-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.merchant-header i {
+  color: #3498db;
+  font-size: 20px;
 }
 
 .merchant-name {
   font-size: 20px;
-  font-weight: bold;
-  color: #222;
-  border-left: 4px solid #42b983;
-  padding-left: 10px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
 }
 
-/* 卡片网格布局 */
+/* 菜品网格 */
 .dish-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 20px;
-}
-@media (min-width: 1200px) {
-  .dish-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
 }
 
 .dish-card {
-  aspect-ratio: 4 / 5;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  justify-content: space-between;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
-/* 菜品图 */
+.dish-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dish-img-wrapper {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
 .dish-img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  transition: transform 0.3s ease;
 }
 
-/* 菜名 */
-.dish-name {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  margin: 8px 0;
-  color: #222;
+.dish-card:hover .dish-img {
+  transform: scale(1.05);
 }
 
-/* 价格 + 复选框 */
-.dish-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  margin-top: 4px;
-}
-
-.card-checkbox {
-  transform: scale(1.3);
+.dish-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  color: #fff;
 }
 
 .dish-price {
-  font-size: 16px;
-  color: #e94d3b;
+  font-size: 18px;
+  font-weight: 600;
 }
 
-/* 数量按钮 */
+.dish-info {
+  padding: 16px;
+}
+
+.dish-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 12px 0;
+}
+
+.dish-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .count-controls {
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 12px;
-  margin-top: 10px;
 }
 
-.count-controls button {
-  background-color: #42b983;
-  color: white;
-  border: none;
+.control-btn {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  font-size: 18px;
-  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  background: #f0f0f0;
+  color: #2c3e50;
+  font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.count-controls button:hover {
-  background-color: #369f6b;
+.control-btn:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
 }
 
-.count-controls span {
+.control-btn.plus {
+  background: #42b983;
+  color: #fff;
+}
+
+.control-btn.plus:hover {
+  background: #369f6b;
+}
+
+.quantity {
   font-size: 16px;
-  min-width: 28px;
+  font-weight: 600;
+  color: #2c3e50;
+  min-width: 24px;
   text-align: center;
 }
 
-/* 底部 */
+/* 底部结算 */
 .cart-footer {
-  text-align: right;
-  margin-top: 32px;
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
 }
 
-.total {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 12px;
-  color: #222;
+.total-info {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
 }
 
-.empty {
-  text-align: center;
+.total-label {
   font-size: 16px;
-  color: #888;
-  margin-top: 80px;
+  color: #666;
+}
+
+.total-price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #e74c3c;
+}
+
+.checkout-btn {
+  background: linear-gradient(135deg, #42b983, #369f6b);
+  border: none;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(66, 185, 131, 0.3);
+}
+
+@media (max-width: 768px) {
+  .cart-header {
+    padding: 30px 16px;
+  }
+
+  .cart-title {
+    font-size: 24px;
+  }
+
+  .cart-actions {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .search-wrapper {
+    max-width: 100%;
+  }
+
+  .dish-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cart-footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
 }
 </style>
