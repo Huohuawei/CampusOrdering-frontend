@@ -29,6 +29,12 @@
             <span>我的订单</span>
           </router-link>
         </li>
+        <li>
+          <router-link to="/user/profile" :class="{ hoverable: true, active: current === '/user/profile' }">
+            <i class="fas fa-user"></i>
+            <span>个人信息</span>
+          </router-link>
+        </li>
       </ul>
     </nav>
     <main class="main-content">

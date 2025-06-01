@@ -12,6 +12,7 @@ import Cart from '../views/user/cart/Cart.vue'
 import AIassistant from '../views/user/home/AI.vue'
 
 import Orders from '../views/user/orders/Orders.vue'
+import UserProfile from '../views/user/home/UserProfile.vue'
 
 // 定义路由规则
 const routes = [
@@ -30,6 +31,7 @@ const routes = [
       { path: 'order/confirm', name: 'OrderConfirm', component: () => import('../views/user/orders/OrderConfirm.vue') },
       { path: '/merchant/:id', component: MerchantDetail },
       { path: 'aiassistant', component: AIassistant },
+      { path: 'profile', component: UserProfile }, 
       { path: '', redirect: 'home' }
     ]
   },
