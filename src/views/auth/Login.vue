@@ -19,16 +19,16 @@ const router = useRouter()
 const handleLogin = async (formData) => {
   try {
     // console.log('登录数据:', formData)
-    
+
     // 1. 调用API获取用户信息
     const response = await fetch(`http://localhost:8080/api/users/username/${formData.username}`)
-    
+
     if (!response.ok) {
       throw new Error('用户不存在或服务器错误')
     }
-    
+
     const userData = await response.json()
-    
+
     //  验证密码
     if (userData.password !== formData.password) {
       throw new Error('密码错误')
@@ -46,18 +46,18 @@ const handleLogin = async (formData) => {
     }))
 
     // 根据角色跳转到不同页面
-    switch(userData.role) {
+    switch (userData.role) {
       case 'ADMIN':
         router.push('adminhome')
         break
       case 'MERCHANT':
-        router.push('/merchanthome')
+        router.push('/merchant/dashboard')
         break
       case 'USER':
       default:
         router.push('/user/home')
     }
-    
+
   } catch (error) {
     console.error('登录失败:', error)
     alert(error.message || '登录失败，请检查用户名和密码')
@@ -76,7 +76,7 @@ const switchToRegister = () => {
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background: 
+  background:
     linear-gradient(135deg, rgba(52, 152, 219, 0.2) 0%, rgba(44, 62, 80, 0.3) 100%),
     url('../src/assets/logo1.jpg') no-repeat center center;
   background-size: cover;
@@ -132,7 +132,7 @@ h1 {
   .auth-wrapper {
     background-position: 60% center;
   }
-  
+
   .auth-container {
     padding: 2rem;
     margin: 1rem;

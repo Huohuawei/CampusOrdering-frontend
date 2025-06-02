@@ -53,7 +53,7 @@ const searchKeyword = ref('')
 const merchants = ref([])
 
 const goToDetail = (id) => {
-  router.push(`/merchant/${id}`)
+  router.push(`merchants/${id}`)
 }
 
 onMounted(async () => {
