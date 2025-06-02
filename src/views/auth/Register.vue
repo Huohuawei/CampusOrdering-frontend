@@ -93,12 +93,12 @@ const handleRegister = async (formData) => {
         } catch (e) {
           console.error('解析错误响应失败:', e)
         }
-        
+
         // 回滚用户注册(实际项目中可能需要调用删除用户API)
         // await fetch(`http://localhost:8080/api/users/${createdUser.id}`, {
         //   method: 'DELETE'
         // })
-        
+
         throw new Error(errorMessage)
       }
 
@@ -107,16 +107,16 @@ const handleRegister = async (formData) => {
     }
 
     // 5. 注册成功处理
-    const successMessage = formData.role === 'merchant' 
-      ? '商家注册成功，请等待管理员审核' 
+    const successMessage = formData.role === 'merchant'
+      ? '商家注册成功，请等待管理员审核'
       : '用户注册成功，请登录'
-    
+
     alert(successMessage)
     router.push('/login')
 
   } catch (error) {
     console.error('注册失败:', error)
-    
+
     // 根据错误类型显示不同的提示
     let errorMessage = '注册失败，请重试'
     if (error.message.includes('username') || error.message.includes('用户名')) {

@@ -1,5 +1,6 @@
 import axios from 'axios'
-
+import { get, post, put, del } from './request'
+import type { Cart, CartItem } from '@/types'
 // 加入购物车
 export const addCartItem = async (userId: number, dishId: number, quantity: number) => {
   const params = new URLSearchParams()
@@ -36,4 +37,19 @@ export const getCartByUserId = async (userId: number) => {
 export const getCartItems = async (cartId: number) => {
   const response = await axios.get(`/api/carts/${cartId}/items`)
   return response.data
+}
+
+export function addItemToCart(userId: number, dishId: number, quantity: number = 1) {
+  return post<CartItem>(`/api/carts/${userId}/items?dishId=${dishId}&quantity=${quantity}`)
+}
+
+
+// 从购物车移除商品
+export function removeItemFromCart(cartItemId: number) {
+  return del<void>(`/api/carts/items/${cartItemId}`)
+}
+
+// 清空购物车
+export function clearCart(userId: number) {
+  return del<void>(`/api/carts/user/${userId}/clear`)
 }

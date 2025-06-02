@@ -31,8 +31,35 @@ const routes = [
     ]
   },
 
+<<<<<<< Updated upstream
   // 默认访问根路径跳转到 /user
   { path: '/', redirect: '/user/home' }
+=======
+  // 商家端路由
+  {
+    path: '/merchant',
+    component: () => import('../views/merchant/MerchantLayout.vue'),
+    meta: { requiresAuth: true, role: 'MERCHANT' },
+    children: [
+      { path: 'dashboard', component: () => import('../views/merchant/Dashboard.vue') },
+      { path: 'menu', component: () => import('../views/merchant/MenuManagement.vue') },
+      { path: 'orders', component: () => import('../views/merchant/OrderManagement.vue') },
+      { path: 'statistics', component: () => import('../views/merchant/SalesStatistics.vue') },
+      { path: 'profile', component: () => import('../views/merchant/Profile.vue') }
+    ]
+  },
+
+  // 工具路由
+  {
+    path: '/api-tester',
+    name: 'ApiTester',
+    component: () => import('../views/ApiTester.vue'),
+    meta: { title: 'API测试工具' }
+  },
+
+  // 默认路由
+  { path: '/', redirect: 'login' }
+>>>>>>> Stashed changes
 ]
 
 // 创建 Router 实例

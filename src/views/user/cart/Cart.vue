@@ -65,7 +65,14 @@ import { getCartByUserId, getCartItems, updateCartItemQuantity, removeCartItem }
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
+<<<<<<< Updated upstream
 const userId = 1
+=======
+
+const user = JSON.parse(localStorage.getItem('user'))
+const userId = user?.id  
+
+>>>>>>> Stashed changes
 const cartItems = ref([])
 const selectedIds = ref([])
 const selectAll = ref(false)
