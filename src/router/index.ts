@@ -43,7 +43,7 @@ const routes = [
     children: [
       { path: 'dashboard', component: () => import('@/views/merchant/Dashboard.vue') },
       { path: 'menu', component: () => import('@/views/merchant/MenuManagement.vue') },
-
+      { path: 'AI', component: () => import('@/views/merchant/AIAssistant.vue') },
       { path: 'orders', component: () => import('@/views/merchant/OrderManagement.vue') },
       { path: 'statistics', component: () => import('@/views/merchant/SalesStatistics.vue') },
       { path: 'profile', component: () => import('@/views/merchant/Profile.vue') }
