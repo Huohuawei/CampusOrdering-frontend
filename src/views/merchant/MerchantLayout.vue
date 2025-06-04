@@ -22,6 +22,10 @@
           <el-icon><TrendCharts /></el-icon>
           <span>销售统计</span>
         </el-menu-item>
+        <el-menu-item index="/merchant/AI">
+          <el-icon><List /></el-icon>
+          <span>备菜助手</span>
+        </el-menu-item>
         <el-menu-item index="/merchant/profile">
           <el-icon><User /></el-icon>
           <span>商家信息</span>

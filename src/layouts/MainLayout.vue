@@ -12,6 +12,7 @@
       <el-menu mode="horizontal" :router="true" class="nav-menu">
         <el-menu-item index="/merchant/menu">菜单管理</el-menu-item>
         <el-menu-item index="/merchant/orders">订单管理</el-menu-item>
+        <el-menu-item index="/merchant/AI">备菜助手</el-menu-item>
         <el-menu-item index="/merchant/profile">商家信息</el-menu-item>
       </el-menu>
       <div class="user-info">
@@ -62,7 +63,7 @@ const fetchMerchantInfo = async () => {
 const handleLogout = () => {
   localStorage.removeItem('token')
   localStorage.removeItem('user')
-  userStore.clearUser()
+
   router.push('/login')
 }
 
