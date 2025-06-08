@@ -59,7 +59,7 @@
     <el-dialog
       v-model="dialogVisible"
       :title="isEdit ? '编辑菜品' : '添加菜品'"
-      width="600px"
+      class="dish-dialog"
     >
       <el-form
         ref="formRef"
@@ -94,17 +94,18 @@
           <span class="ml-2">分钟</span>
         </el-form-item>
         <el-form-item label="图片" prop="imageUrl">
-          <el-upload
-            class="dish-image-uploader"
-            action="/api/upload"
-            :show-file-list="false"
-            :on-success="handleImageSuccess"
-            :before-upload="beforeImageUpload"
-          >
-            <img v-if="dishForm.imageUrl" :src="dishForm.imageUrl" class="uploaded-image" />
-            <el-icon v-else class="uploader-icon"><Plus /></el-icon>
-          </el-upload>
-          <div class="image-tip">建议尺寸：800x600px，支持jpg、png格式</div>
+          <el-input
+            v-model="dishForm.imageUrl"
+            placeholder="请输入图片URL地址"
+          />
+          <div class="image-preview" v-if="dishForm.imageUrl">
+            <el-image
+              :src="dishForm.imageUrl"
+              fit="cover"
+              class="preview-image"
+            />
+          </div>
+          <div class="image-tip">请输入图片URL地址，建议尺寸：800x600px</div>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -163,7 +164,7 @@ const rules = {
     { type: 'number', min: 1, max: 120, message: '等待时间必须在1-120分钟之间', trigger: 'blur' }
   ],
   imageUrl: [
-    { required: true, message: '请上传菜品图片', trigger: 'change' }
+    { pattern: /^https?:\/\/.+/, message: '请输入有效的图片URL地址', trigger: 'blur' }
   ]
 }
 
@@ -261,27 +262,6 @@ const handleToggleAvailability = async (dish: Dish) => {
   }
 }
 
-// 处理图片上传
-const handleImageSuccess: UploadProps['onSuccess'] = (response) => {
-  dishForm.value.imageUrl = response.url
-}
-
-const beforeImageUpload: UploadProps['beforeUpload'] = (file) => {
-  const isJPG = file.type === 'image/jpeg'
-  const isPNG = file.type === 'image/png'
-  const isLt2M = file.size / 1024 / 1024 < 2
-
-  if (!isJPG && !isPNG) {
-    ElMessage.error('上传图片只能是 JPG 或 PNG 格式!')
-    return false
-  }
-  if (!isLt2M) {
-    ElMessage.error('上传图片大小不能超过 2MB!')
-    return false
-  }
-  return true
-}
-
 onMounted(async () => {
   try {
     // 获取当前商家信息
@@ -297,70 +277,164 @@ onMounted(async () => {
 <style scoped>
 .menu-management {
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f5 100%);
+  min-height: calc(100vh - 60px);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 15px;
+}
+
+.header-left h1 {
+  color: #004d80;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ml-4 {
+  margin-left: 15px;
+}
+
+/* 表格样式 */
+:deep(.el-table) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+}
+
+:deep(.el-table th) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%) !important;
+  color: #004d80;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-table td) {
+  border-bottom: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+:deep(.el-table tr:hover > td) {
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%) !important;
 }
 
 .dish-image {
   width: 80px;
   height: 80px;
-  border-radius: 4px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 77, 128, 0.2);
 }
 
-.dish-image-uploader {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  width: 178px;
-  height: 178px;
+/* 按钮组样式 */
+:deep(.el-button-group) {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  gap: 8px;
 }
 
-.dish-image-uploader:hover {
-  border-color: #409EFF;
+:deep(.el-button) {
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  text-align: center;
-  line-height: 178px;
+:deep(.el-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 77, 128, 0.15);
 }
 
-.uploaded-image {
-  width: 178px;
-  height: 178px;
+/* 对话框样式 */
+:deep(.dish-dialog) {
+  width: 600px;
+}
+
+:deep(.el-dialog) {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-dialog__title) {
+  color: #004d80;
+  font-weight: 600;
+}
+
+:deep(.el-dialog__body) {
+  padding: 25px;
+}
+
+:deep(.el-dialog__footer) {
+  padding: 20px;
+  border-top: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+/* 图片预览样式 */
+.image-preview {
+  margin-top: 10px;
+  width: 200px;
+  height: 150px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
 .image-tip {
   font-size: 12px;
-  color: #909399;
+  color: #666;
   margin-top: 8px;
 }
 
-.ml-2 {
-  margin-left: 8px;
-}
-
-.ml-4 {
-  margin-left: 16px;
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .menu-management {
+    padding: 15px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .header-left h1 {
+    font-size: 20px;
+  }
+  
+  .dish-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  :deep(.el-button-group) {
+    flex-wrap: wrap;
+  }
 }
 </style> 

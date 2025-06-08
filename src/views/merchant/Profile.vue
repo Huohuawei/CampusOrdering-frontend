@@ -213,51 +213,157 @@ onMounted(() => {
 <style scoped>
 .profile {
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f5 100%);
+  min-height: calc(100vh - 60px);
+}
+
+.profile h2 {
+  color: #004d80;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
 }
 
 .profile-card {
   max-width: 800px;
   margin: 0 auto;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+  transition: all 0.3s;
+}
+
+.profile-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 77, 128, 0.15);
 }
 
 .profile-form {
   margin-top: 20px;
+  padding: 20px;
+}
+
+:deep(.el-form-item__label) {
+  color: #004d80;
+  font-weight: 500;
+}
+
+:deep(.el-input__wrapper),
+:deep(.el-textarea__inner) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border: 1px solid rgba(0, 77, 128, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+:deep(.el-input__wrapper:hover),
+:deep(.el-textarea__inner:hover) {
+  border-color: #004d80;
+  box-shadow: 0 0 0 1px rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-input__wrapper:focus-within),
+:deep(.el-textarea__inner:focus) {
+  border-color: #004d80;
+  box-shadow: 0 0 0 1px rgba(0, 77, 128, 0.3);
+}
+
+:deep(.el-time-picker) {
+  width: 100%;
 }
 
 .avatar-uploader,
 .qr-uploader {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
+  border: 2px dashed rgba(0, 77, 128, 0.2);
+  border-radius: 8px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: var(--el-transition-duration-fast);
+  transition: all 0.3s;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
 }
 
 .avatar-uploader:hover,
 .qr-uploader:hover {
-  border-color: var(--el-color-primary);
+  border-color: #004d80;
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%);
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.qr {
+  width: 178px;
+  height: 178px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
 }
 
 .avatar-uploader-icon,
 .qr-uploader-icon {
   font-size: 28px;
-  color: #8c939d;
+  color: #004d80;
   width: 178px;
   height: 178px;
   text-align: center;
   line-height: 178px;
 }
 
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+:deep(.el-button) {
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  border: 1px solid rgba(0, 77, 128, 0.2);
+  color: #004d80;
+  font-weight: 500;
 }
 
-.qr {
-  width: 178px;
-  height: 178px;
-  display: block;
+:deep(.el-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 77, 128, 0.15);
+  background: linear-gradient(135deg, #b0d1e8 0%, #a0c8e0 100%);
+}
+
+:deep(.el-button:active) {
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .profile {
+    padding: 15px;
+  }
+  
+  .profile h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .profile-form {
+    padding: 15px;
+  }
+  
+  .avatar-uploader,
+  .qr-uploader {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .avatar,
+  .qr,
+  .avatar-uploader-icon,
+  .qr-uploader-icon {
+    width: 150px;
+    height: 150px;
+    line-height: 150px;
+  }
 }
 </style>

@@ -90,7 +90,6 @@
         </span>
       </div>
 
-      <!-- 商家特有字段 -->
       <div v-if="formData.role === 'merchant'" class="form-group">
         <label for="shopDes">店铺描述</label>
         <textarea id="shopDes" v-model="formData.shopDes" required placeholder="请简要描述您的店铺" class="form-textarea"
@@ -162,49 +161,73 @@ const submitForm = () => {
 </script>
 
 <style scoped>
-/* 样式保持不变，与之前相同 */
+/* Sea island vacation theme */
 .auth-form {
   width: 90%;
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.9));
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 76, 95, 0.15);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .form-group {
   position: relative;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
 }
 
 label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #555;
-  font-weight: 500;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  color: #004c5f;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .form-input,
 .form-select,
 .form-textarea {
   width: 100%;
-  padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  padding: 0.9rem 1rem 0.9rem 3rem;
+  border: 1px solid rgba(0, 128, 160, 0.3);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: linear-gradient(145deg, #f0f8ff, #e6f0fa);
+  color: #003a4a;
   transition: all 0.3s ease;
-  background-color: #f9f9f9;
+  box-shadow: inset 0 2px 4px rgba(0, 76, 95, 0.1);
 }
 
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #42b983;
-  box-shadow: 0 0 0 2px rgba(66, 185, 131, 0.2);
-  background-color: white;
+  border-color: #00b7eb;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(0, 183, 235, 0.3);
+  transform: scale(1.02);
 }
 
 .form-textarea {
   resize: vertical;
-  min-height: 100px;
-  padding-top: 1rem;
+  min-height: 120px;
+  padding-top: 1.2rem;
 }
 
 .input-icon {
@@ -212,11 +235,18 @@ label {
   left: 1rem;
   top: 70%;
   transform: translateY(-50%);
-  color: #999999;
+  color: #0080a0;
+  transition: color 0.3s ease;
+}
+
+.form-input:focus+.input-icon,
+.form-select:focus+.select-arrow,
+.form-textarea:focus+.textarea-icon {
+  color: #00b7eb;
 }
 
 .textarea-icon {
-  top: 2.5rem;
+  top: 2.8rem;
   transform: none;
 }
 
@@ -226,8 +256,9 @@ label {
 
 .form-select {
   appearance: none;
-  padding-right: 2.5rem;
+  padding-right: 3rem;
   cursor: pointer;
+  background: linear-gradient(145deg, #f0f8ff, #e6f0fa);
 }
 
 .select-arrow {
@@ -236,92 +267,113 @@ label {
   top: 70%;
   transform: translateY(-50%);
   pointer-events: none;
-  color: #999;
+  color: #0080a0;
 }
 
 .password-toggle {
   position: absolute;
-  right: 0rem;
+  right: 0.8rem;
   top: 70%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #999;
+  color: #0080a0;
   cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition: color 0.2s ease;
+  padding: 0.4rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
 .password-toggle:hover {
-  color: #42b983;
+  color: #00b7eb;
+  background: rgba(0, 183, 235, 0.1);
 }
 
 .submit-btn {
   width: 100%;
-  padding: 0.9rem;
-  background-color: #42b983;
+  padding: 1rem;
+  background: linear-gradient(90deg, #00b7eb, #00d4ff);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: 0.5s;
+}
+
+.submit-btn:hover::before {
+  left: 100%;
 }
 
 .submit-btn:hover {
-  background-color: #3aa876;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(66, 185, 131, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 183, 235, 0.4);
+  background: linear-gradient(90deg, #00a3d3, #00c0f0);
 }
 
 .btn-icon {
-  margin-left: 0.5rem;
+  margin-left: 0.6rem;
   display: flex;
 }
 
 .toggle-auth {
   text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: #666;
+  margin-top: 1.8rem;
+  font-size: 0.95rem;
+  color: #004c5f;
 }
 
 .toggle-btn {
   background: none;
   border: none;
-  color: #42b983;
-  font-weight: 500;
+  color: #00b7eb;
+  font-weight: 600;
   cursor: pointer;
-  padding: 0.2rem 0.5rem;
-  margin-left: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  margin-left: 0.4rem;
   font-size: 0.95rem;
+  transition: all 0.3s ease;
 }
 
 .toggle-btn:hover {
-  text-decoration: underline;
+  color: #0080a0;
+  text-decoration: none;
+  background: rgba(0, 183, 235, 0.1);
+  border-radius: 8px;
 }
 
 @media (max-width: 480px) {
+  .auth-form {
+    padding: 1.5rem;
+  }
 
   .form-input,
   .form-select,
   .form-textarea {
-    padding-left: 2.2rem;
+    padding-left: 2.8rem;
+    font-size: 0.95rem;
   }
 
   .input-icon {
-    left: 0.8rem;
+    left: 0.9rem;
   }
 }
 </style>

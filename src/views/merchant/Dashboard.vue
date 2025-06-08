@@ -54,7 +54,7 @@
 
     <el-row :gutter="20" class="mt-4">
       <!-- 菜单管理卡片 -->
-      <el-col :span="12">
+      <el-col :span="24">
         <el-card class="dashboard-card" @click="router.push('/merchant/menu')">
           <template #header>
             <div class="card-header">
@@ -69,23 +69,6 @@
           </div>
         </el-card>
       </el-col>
-
-      <!-- 评价管理卡片 -->
-      <el-col :span="12">
-        <el-card class="dashboard-card" @click="router.push('/merchant/reviews')">
-          <template #header>
-            <div class="card-header">
-              <el-icon><ChatDotRound /></el-icon>
-              <span>评价管理</span>
-            </div>
-          </template>
-          <div class="card-content">
-            <h3>店铺评价</h3>
-            <p>平均评分：{{ reviewStats.averageRating }}</p>
-            <p>评价总数：{{ reviewStats.total }}</p>
-          </div>
-        </el-card>
-      </el-col>
     </el-row>
   </div>
 </template>
@@ -93,11 +76,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Shop, List, TrendCharts, Menu, ChatDotRound } from '@element-plus/icons-vue'
+import { Shop, List, TrendCharts, Menu } from '@element-plus/icons-vue'
 import { useMerchantShopStore } from '@/stores/merchant/shop'
 import { useMerchantOrdersStore } from '@/stores/merchant/orders'
 import { useMerchantDishesStore } from '@/stores/merchant/dishes'
-import { useMerchantReviewsStore } from '@/stores/merchant/reviews'
 import { ElCard, ElRow, ElCol } from 'element-plus'
 import type { DateRange } from '@/types'
 
@@ -105,7 +87,6 @@ const router = useRouter()
 const merchantStore = useMerchantShopStore()
 const ordersStore = useMerchantOrdersStore()
 const dishesStore = useMerchantDishesStore()
-const reviewsStore = useMerchantReviewsStore()
 // 今日订单统计
 const todayOrders = ref({
   pending: 0,
@@ -122,12 +103,6 @@ const todayStats = ref({
 const menuStats = ref({
   total: 0,
   available: 0
-})
-
-// 评价统计
-const reviewStats = ref({
-  averageRating: 0,
-  total: 0
 })
 
 // 获取今日日期范围
@@ -168,15 +143,6 @@ const fetchDashboardStats = async () => {
       total: dishesStore.dishes.length,
       available: dishesStore.dishes.filter(dish => dish.available).length
     }
-
-    // 获取评价统计
-    await reviewsStore.fetchAllReviews()
-    const reviews = reviewsStore.reviews
-    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0)
-    reviewStats.value = {
-      averageRating: reviews.length ? Number((totalRating / reviews.length).toFixed(1)) : 0,
-      total: reviews.length
-    }
   } catch (error) {
     console.error('获取统计数据失败:', error)
   }
@@ -197,41 +163,107 @@ onMounted(async () => {
 <style scoped>
 .merchant-dashboard {
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f5 100%);
+  min-height: calc(100vh - 60px);
 }
 
 .dashboard-card {
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   height: 200px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+}
+
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.4s;
+}
+
+.dashboard-card:hover::before {
+  left: 100%;
 }
 
 .dashboard-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 77, 128, 0.15);
+  border-color: rgba(0, 77, 128, 0.3);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+.card-header .el-icon {
+  font-size: 20px;
+  color: #004d80;
+}
+
+.card-header span {
+  color: #004d80;
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .card-content {
   text-align: center;
-  padding: 20px 0;
+  padding: 25px 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
 }
 
 .card-content h3 {
-  margin: 0 0 10px 0;
-  color: #303133;
+  margin: 0 0 15px 0;
+  color: #004d80;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .card-content p {
-  margin: 5px 0;
-  color: #606266;
+  margin: 8px 0;
+  color: #2c3e50;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .mt-4 {
-  margin-top: 20px;
+  margin-top: 25px;
+}
+
+/* 添加响应式设计 */
+@media (max-width: 768px) {
+  .merchant-dashboard {
+    padding: 15px;
+  }
+  
+  .dashboard-card {
+    height: 180px;
+    margin-bottom: 15px;
+  }
+  
+  .card-content {
+    padding: 20px 15px;
+  }
+  
+  .card-content h3 {
+    font-size: 16px;
+  }
+  
+  .card-content p {
+    font-size: 13px;
+  }
 }
 </style> 

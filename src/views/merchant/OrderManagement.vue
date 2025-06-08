@@ -328,85 +328,201 @@ onMounted(async () => {
 <style scoped>
 .order-management {
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f5 100%);
+  min-height: calc(100vh - 60px);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 15px;
 }
 
+.header-left h1 {
+  color: #004d80;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ml-4 {
+  margin-left: 15px;
+}
+
+/* 订单标签页样式 */
 .order-tabs {
-  margin-left: 20px;
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%);
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 77, 128, 0.15);
 }
 
+:deep(.el-radio-button__inner) {
+  border: none;
+  background: transparent;
+  color: #004d80;
+  transition: all 0.3s;
+}
+
+:deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  color: #004d80;
+  box-shadow: 0 2px 8px rgba(0, 77, 128, 0.15);
+}
+
+/* 表格样式 */
+:deep(.el-table) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+}
+
+:deep(.el-table th) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%) !important;
+  color: #004d80;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-table td) {
+  border-bottom: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+:deep(.el-table tr:hover > td) {
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%) !important;
+  cursor: pointer;
+}
+
+/* 用户信息样式 */
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.order-detail {
-  padding: 20px;
-}
-
-.order-info {
-  margin-bottom: 24px;
-  padding: 16px;
-  background-color: #f5f7fa;
-  border-radius: 4px;
-}
-
-.info-item {
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-}
-
-.info-item:last-child {
-  margin-bottom: 0;
-}
-
-.label {
-  font-weight: bold;
-  margin-right: 8px;
-  color: #606266;
-}
-
-.price {
-  color: #f56c6c;
-  font-weight: bold;
-}
-
-.user-info {
-  margin-bottom: 24px;
-}
-
-.user-info h3 {
-  margin-bottom: 16px;
-  font-size: 16px;
-  color: #303133;
-}
-
-.order-items h3 {
-  margin-bottom: 16px;
-  font-size: 16px;
-  color: #303133;
+  gap: 10px;
 }
 
 .ml-2 {
   margin-left: 8px;
 }
 
-.ml-4 {
-  margin-left: 16px;
+/* 按钮组样式 */
+:deep(.el-button-group) {
+  display: flex;
+  gap: 8px;
+}
+
+:deep(.el-button) {
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+:deep(.el-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 77, 128, 0.15);
+}
+
+/* 订单详情对话框样式 */
+:deep(.el-dialog) {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-dialog__title) {
+  color: #004d80;
+  font-weight: 600;
+}
+
+:deep(.el-dialog__body) {
+  padding: 25px;
+}
+
+.order-detail {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.order-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%);
+  border-radius: 10px;
+  border: 1px solid rgba(0, 77, 128, 0.15);
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.label {
+  color: #004d80;
+  font-weight: 600;
+}
+
+.price {
+  color: #f56c6c;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.user-info h3,
+.order-items h3 {
+  color: #004d80;
+  font-size: 18px;
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .order-management {
+    padding: 15px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .header-left h1 {
+    font-size: 20px;
+  }
+  
+  .order-info {
+    grid-template-columns: 1fr;
+  }
+  
+  :deep(.el-button-group) {
+    flex-wrap: wrap;
+  }
 }
 </style>
 

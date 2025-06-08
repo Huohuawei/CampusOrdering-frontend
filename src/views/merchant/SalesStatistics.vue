@@ -418,59 +418,167 @@ onUnmounted(() => {
 <style scoped>
 .sales-statistics {
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f5 100%);
+  min-height: calc(100vh - 60px);
 }
 
 .mb-4 {
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .mt-4 {
-  margin-top: 20px;
+  margin-top: 25px;
 }
 
-.filter-section {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
+/* 统计卡片样式 */
 .stat-card {
-  height: 100%;
+  height: 180px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 77, 128, 0.15);
+}
+
+.stat-card.total {
+  border-left: 4px solid #004d80;
+}
+
+.stat-card.completed {
+  border-left: 4px solid #67c23a;
+}
+
+.stat-card.pending {
+  border-left: 4px solid #e6a23c;
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+.card-header span {
+  color: #004d80;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .stat-content {
+  padding: 20px;
   text-align: center;
-  padding: 20px 0;
 }
 
 .amount {
-  font-size: 24px;
-  font-weight: bold;
-  color: #303133;
-  margin-bottom: 8px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #004d80;
+  margin-bottom: 10px;
 }
 
 .count {
+  color: #2c3e50;
   font-size: 14px;
-  color: #909399;
 }
 
-.total .amount {
-  color: #409EFF;
+/* 筛选区域样式 */
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
 }
 
-.completed .amount {
-  color: #67C23A;
+:deep(.el-date-editor) {
+  --el-datepicker-border-color: rgba(0, 77, 128, 0.2);
+  --el-datepicker-hover-border-color: #004d80;
 }
 
-.pending .amount {
-  color: #E6A23C;
+:deep(.el-button) {
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+:deep(.el-button:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 77, 128, 0.15);
+}
+
+/* 表格样式 */
+:deep(.el-table) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+}
+
+:deep(.el-table th) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%) !important;
+  color: #004d80;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-table td) {
+  border-bottom: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+:deep(.el-table tr:hover > td) {
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%) !important;
+}
+
+/* 图表卡片样式 */
+:deep(.el-card) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+  transition: all 0.3s;
+}
+
+:deep(.el-card:hover) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 77, 128, 0.15);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .sales-statistics {
+    padding: 15px;
+  }
+  
+  .filter-section {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .stat-card {
+    height: 160px;
+    margin-bottom: 15px;
+  }
+  
+  .amount {
+    font-size: 24px;
+  }
+  
+  .count {
+    font-size: 13px;
+  }
 }
 </style> 

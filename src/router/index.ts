@@ -13,6 +13,14 @@ import AIassistant from '../views/user/home/AI.vue'
 import Orders from '../views/user/orders/Orders.vue'
 import UserProfile from '../views/user/home/UserProfile.vue'
 
+// 管理员端布局和页面
+import AdminLayout from '../views/admin/layout/AdminLayout.vue'
+import AdminDashboard from '../views/admin/Dashboard.vue'
+import AdminUsers from '../views/admin/Users.vue'
+import AdminMerchants from '../views/admin/Merchants.vue'
+import AdminStatistics from '../views/admin/Statistics.vue'
+import AdminSystem from '../views/admin/System.vue'
+
 const routes = [
   // 认证路由
   { path: '/login', component: Login },
@@ -50,8 +58,20 @@ const routes = [
     ]
   },
 
-
-
+  // 管理员端路由
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: { requiresAuth: true, role: 'ADMIN' },
+    children: [
+      { path: 'dashboard', component: AdminDashboard },
+      { path: 'users', component: AdminUsers },
+      { path: 'merchants', component: AdminMerchants },
+      { path: 'statistic', component: AdminStatistics },
+      { path: 'system', component: AdminSystem },
+      { path: '', redirect: 'dashboard' }
+    ]
+  },
 
   // 工具路由
   {
@@ -80,7 +100,19 @@ router.beforeEach((to, from, next) => {
       next('/login')
     } else if (to.meta.role && to.meta.role !== user.role) {
       // 根据角色重定向到对应首页
-      next(user.role === 'MERCHANT' ? '/merchant/dashboard' : '/user/home')
+      switch (user.role) {
+        case 'ADMIN':
+          next('/admin/dashboard')
+          break
+        case 'MERCHANT':
+          next('/merchant/dashboard')
+          break
+        case 'USER':
+          next('/user/home')
+          break
+        default:
+          next('/login')
+      }
     } else {
       next()
     }

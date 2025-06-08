@@ -109,11 +109,145 @@ onMounted(() => {
 <style scoped>
 .reviews-container {
   padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f0f5 100%);
+  min-height: calc(100vh - 60px);
+}
+
+.reviews-container h2 {
+  color: #004d80;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* 表格样式 */
+:deep(.el-table) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 77, 128, 0.1);
+  border: 1px solid rgba(0, 77, 128, 0.15);
+}
+
+:deep(.el-table th) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%) !important;
+  color: #004d80;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-table td) {
+  border-bottom: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+:deep(.el-table tr:hover > td) {
+  background: linear-gradient(135deg, #e8f0f5 0%, #d3e4ed 100%) !important;
+}
+
+/* 评分样式 */
+:deep(.el-rate) {
+  --el-rate-icon-size: 20px;
+  --el-rate-icon-margin: 4px;
+}
+
+:deep(.el-rate__icon) {
+  color: #e6a23c;
+}
+
+/* 按钮样式 */
+:deep(.el-button) {
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+:deep(.el-button--primary) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  border: 1px solid rgba(0, 77, 128, 0.2);
+  color: #004d80;
+}
+
+:deep(.el-button--primary:hover) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 77, 128, 0.15);
+  background: linear-gradient(135deg, #b0d1e8 0%, #a0c8e0 100%);
+}
+
+:deep(.el-button--primary:active) {
+  transform: translateY(0);
+}
+
+/* 对话框样式 */
+:deep(.el-dialog) {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-dialog__header) {
+  background: linear-gradient(135deg, #c6e0f0 0%, #b0d1e8 100%);
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-dialog__title) {
+  color: #004d80;
+  font-weight: 600;
+}
+
+:deep(.el-dialog__body) {
+  padding: 25px;
+}
+
+:deep(.el-dialog__footer) {
+  padding: 20px;
+  border-top: 1px solid rgba(0, 77, 128, 0.1);
+}
+
+/* 表单样式 */
+:deep(.el-form-item__label) {
+  color: #004d80;
+  font-weight: 500;
+}
+
+:deep(.el-textarea__inner) {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f7fa 100%);
+  border: 1px solid rgba(0, 77, 128, 0.2);
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+:deep(.el-textarea__inner:hover) {
+  border-color: #004d80;
+  box-shadow: 0 0 0 1px rgba(0, 77, 128, 0.2);
+}
+
+:deep(.el-textarea__inner:focus) {
+  border-color: #004d80;
+  box-shadow: 0 0 0 1px rgba(0, 77, 128, 0.3);
 }
 
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .reviews-container {
+    padding: 15px;
+  }
+  
+  .reviews-container h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  :deep(.el-rate) {
+    --el-rate-icon-size: 16px;
+    --el-rate-icon-margin: 2px;
+  }
 }
 </style>
