@@ -72,6 +72,7 @@ import { useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { createOrder, addOrderItem } from '../../../api/order'
+import axios from 'axios'
 
 const user = JSON.parse(localStorage.getItem('user'))
 const userId = user?.id  
@@ -129,20 +130,37 @@ onMounted(() => {
 })
 
 // 提交订单
+// 在confirmOrder函数中添加删除购物车项的逻辑
 const confirmOrder = async () => {
   console.log('💥 confirmOrder 触发了')
   try {
-
+    // 1. 创建订单
     const order = await createOrder(userId)
     const orderId = order.id
 
+    // 2. 添加订单项
     for (const item of items.value) {
       await addOrderItem(orderId, item.dish.id, item.quantity)
     }
 
+    // 3. 更新订单状态
     await fetch(`/api/orders/${orderId}/status/CONFIRMED`, { method: 'PATCH' })
 
+    // 4. 删除购物车中已下单的商品
+    const cartItemIds = JSON.parse(sessionStorage.getItem('draftCart'))
+      ?.filter(item => items.value.some(i => i.dish.id === item.dish.id))
+      ?.map(item => item.id) || []
+    
+    if (cartItemIds.length > 0) {
+      const deletePromises = cartItemIds.map(id => 
+        axios.delete(`http://localhost:8080/api/carts/items/${id}`)
+      )
+      await Promise.all(deletePromises)
+    }
+
+    // 5. 清理临时数据
     sessionStorage.removeItem('draftOrder')
+    sessionStorage.removeItem('draftCart')
 
     ElMessage.success('下单成功！')
     router.push('/user/orders')
@@ -151,6 +169,8 @@ const confirmOrder = async () => {
     ElMessage.error('提交失败，请稍后重试')
   }
 }
+
+
 </script>
 
 <style scoped>
